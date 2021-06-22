@@ -1,5 +1,5 @@
 from google.oauth2.service_account import Credentials
-import googleapiclient.discovery, json, progress.bar, glob, sys, argparse, time
+import googleapiclient.discovery, json, glob, sys, argparse, time
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import os, pickle
@@ -57,7 +57,6 @@ drive = googleapiclient.discovery.build("drive", "v3", credentials=creds)
 batch = drive.new_batch_http_request()
 
 aa = glob.glob('%s/*.json' % acc_dir)
-pbar = progress.bar.Bar("Readying accounts", max=len(aa))
 for i in aa:
     ce = json.loads(open(i).read())['client_email']
     batch.add(drive.permissions().create(fileId=did, supportsAllDrives=True, body={
@@ -65,8 +64,6 @@ for i in aa:
         "type": "user",
         "emailAddress": ce
     }))
-    pbar.next()
-pbar.finish()
 print('Adding...')
 batch.execute()
 
